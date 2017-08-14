@@ -1,17 +1,17 @@
 # Onprint-sdk-js
-This SDK contains the basic Onprint operations in browser-side Javascript, using JQuery.
+This SDK contains the basic Onprint operations in browserside Javascript, using JQuery. It works with the Onprint API. Don't know Onprint? [Have a look!](http://onprint.com)
 The goal is to provide code samples you can test and try. Even if you always can, it was not initially designed to become a library to include in any project. Performance could be improved, and the distribution package creation is not included.
-These examples will soon enrich the already well detailed [Onprint developer documentation](http://developer.onprint.com). Please check it so that you understand better the code here.
+These examples will soon enrich the already well detailed [Onprint developer documentation](http://developer.onprint.com). You may check this documentation before starting.
 
 # Getting Started
-The repository is separated into two parts: *sdk* and *test*. The *test* folder contains very (too?) simple tests to go through the different steps of the developer quickstart, from enriching an image to searching for it. The *sdk* folder contains the API calls.
+The repository is separated into two parts: *sdk* and *test*. The *test* folder contains very simple tests to go through the different steps of the developer quickstart, from enriching an image to searching for it. The *sdk* folder contains the API calls.
 
 ## Test
 The tests describe 6 steps: Login to Onprint, Search for an image, Enrich an image, Add a zone and actions to the activated image, Search the created image and Cleanup. They are built with [Mocha.js](https://mochajs.org).
 You will see several BDD-style tests that call directly the SDK functions.
 
 ### Configuration
-Before executing the tests you need to have an account on [edition.onprint.com](http://edition.onprint.com) with some page credits and an API Key access. If it is not the case please ask us for a demo account on [the developer website](http://developer.onprint,com), we'll be happy to give you something to play with.
+Before executing the tests you need to have an account on [edition.onprint.com](http://edition.onprint.com) with some page credits and an API Key access. If it is not the case please ask us for a demo account on [the developer website](http://developer.onprint.com), we'll be happy to give you something to play with.
 Then, enter you test configuration in the *testconfig.js* file:
 
 ```
@@ -24,7 +24,7 @@ var testconfig = {
 
 ### Execution
 You should now be able to run *test/index.html* in your server and see what's happening.
-If you skip the Cleanup step (by replacing `describe()` with `describe.skip()`), you will be able to visualize the created folder in the edition platform. Don't forget to remove the folder manually if you do so to avoid image conflicts.
+If you skip the Cleanup step (by replacing `describe()` with `describe.skip()`), you will be able to visualize the created folder in the edition platform. Don't forget to remove the folder manually when you finish to avoid image conflicts.
 If you get no image, try with your own one and simply replace rabbits.jpg and rabbitszone.jpg.
 
 ## SDK
@@ -32,7 +32,7 @@ The SDK is separated into different parts. The first one is onprint-sdk, contain
 "private / do not call directly" functions are identified with a prefix underscore like in *_getChildren()*.
 
 ### Configuration
-Onprint API can be called in two different ways: Https most of the time, and Http for Enriched Images search.
+The Onprint API can be called two different ways: Https most of the time, and Http for Enriched Images search.
 In *config.js* you will find both base urls. You may not change them unless we invite you to do so.
 
 ```
