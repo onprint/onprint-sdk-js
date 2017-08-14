@@ -11,6 +11,14 @@ function _getChildren(nodeId, typename, callback) {
     });
 }
 
+function getDocument(nodeId, callback) {
+    getOne(nodeId, 'documents', callback);
+}
+
+function getAction(id, callback) {
+    getOne(id, 'actions', callback);
+}
+
 function deleteFolder(id, deletechildren, callback) {
     deleteOne(id, 'folders', deletechildren, callback);
 }
@@ -37,4 +45,8 @@ function getChildrenFolders(nodeId, callback) {
 
 function getChildrenOrganizations(nodeId, callback) {
     _getChildren(nodeId, 'organizations', callback);
+}
+
+function getChildrenActions(nodeId, callback) {
+    _getChildren(nodeId, 'actions', callback);
 }

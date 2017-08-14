@@ -39,8 +39,16 @@ function postAction(action, callback) {
     postOne(action, 'actions', callback);
 }
 
+function putAction(action, callback) {
+    putOne(action, 'actions', callback);
+}
+
 function putTitle(title, callback) {
     putOne(title, 'titles', callback);
+}
+
+function postZone(zone, callback) {
+    postOne(zone, 'zones', callback);
 }
 
 function activateDocument(docid, callback) {

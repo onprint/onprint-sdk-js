@@ -1,6 +1,4 @@
-var apiKey = "[[[YOUR API KEY HERE]]]";
-
-function login(username, password, callback) {
+function login(username, password, apikey, callback) {
 
     if (username == '' || password == '') {
         alert('missing username or password');
@@ -13,7 +11,7 @@ function login(username, password, callback) {
         type: 'POST',
         accept: 'application/json',
         headers: {
-            'ApiKey': apiKey
+            'ApiKey': apikey
         },
         contentType: "application/x-www-form-urlencoded",
         data: formData,

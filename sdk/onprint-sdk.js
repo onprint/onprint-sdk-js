@@ -1,12 +1,9 @@
-var baseurlenrich = "https://api.onprint.com"; 
-var baseurlscan = "http://api.onprint.com";
-
 function getUrl(relativeurl, secure = true) {
     if(secure) {
-        return baseurlenrich.concat(relativeurl);
+        return config.baseurlenrich.concat(relativeurl);
     }
     else {
-        return baseurlscan.concat(relativeurl);
+        return config.baseurlscan.concat(relativeurl);
     }
 }
 
@@ -83,117 +80,6 @@ function deleteOne(id, typename, recursive, callback) {
         },
         error: function (xhr, status) {
             callback(null, status, xhr);
-        }
-    });
-}
-
-
-
-function importFull(docFile, actionsFile, pathfile, activate, typemime) {
-    var boundary = getBoundary();
-    
-    var contentPath = createFileContent(pathfile.name, "pathfile", pathfile.type, boundary);
-    var contentDoc = createFileContent(docfile.name, "docfile", docfile.type, boundary);
-    var contentActions = createFileContent(actionsFile.name, "actionsfile", actionsFile.type, boundary);
-
-    var blob = new Blob([contentPath, pathfile, contentDoc, docFile, contentActions, actionsFile, createEndContent(boundary)]);
-
-    $.ajax({
-        method: 'POST',
-        url: getUrl('/services/Automation/FullImport?activate=' + activate + '&typemime=' + typemime),
-        data: blob,
-        contentType: 'multipart/form-data; boundary="' + boundary + '"',
-        dataType: 'json',
-        processData: false,
-        success: function (data, status) {
-            //showAlert('fullimport-alert', 'Document Imported!', true);
-        },
-        error: function (xhr, status) {
-            //showAlert('fullimport-alert', 'Cannot upload: ' + JSON.parse(xhr.responseText).error, false);
-        }
-    });
-}
-
-function putDocument(file, documentId, async) {
-    //On crée une "borne" pour séparer les variables
-    var boundary = getBoundary();
-
-    var contentFile = createFileContent(file.name, "file", file.type, boundary);
-    
-    var blob = new Blob([contentFile, file, createEndContent(boundary)]);
-
-    $.ajax({
-        method: 'PUT',
-        url: getUrl('/api/documents/' + documentId + '?async=' + async),
-        data: blob,
-        contentType: 'multipart/form-data; boundary="' + boundary + '"',
-        dataType: 'json',
-        processData: false,
-        success: function (data, status) {
-            //showAlert('document-change-alert', 'Document changed!', true);
-        },
-        error: function (xhr, status) {
-            //showAlert('document-change-alert', 'Cannot upload: ' + JSON.parse(xhr.responseText).error, false);
-        }
-    });
-}
-
-function postIcon(file, icon) {
-    var boundary = getBoundary();
-
-    var contentForm = createFormContent(icon, "icon", boundary);
-    var contentFile = createFileContent(file.name, "file", file.type, boundary);
-    
-    var blob = new Blob([contentForm, contentFile, file, createEndContent(boundary)]);
-
-    $.ajax({
-        method: 'POST',
-        url: getUrl('/api/icons'),
-        data: blob,
-        contentType: 'multipart/form-data; boundary="' + boundary + '"',
-        dataType: 'json',
-        processData: false,
-        success: function (data, status) {
-            //showAlert('icon-upload-alert', 'Icon Imported!', true);
-        },
-        error: function (xhr, status) {
-            //showAlert('icon-upload-alert', 'Cannot upload: ' + JSON.parse(xhr.responseText).error, false);
-        }
-    });
-}
-
-function putLogo(file, orgId) {
-    var boundary = getBoundary();
-
-    var contentFile = createFileContent(file.name, "file", file.type, boundary);
-    
-    var blob = new Blob([contentFile, file, createEndContent(boundary)]);
-    
-    $.ajax({
-        method: 'PUT',
-        url: getUrl('/api/logo/' + orgId),
-        data: blob,
-        contentType: 'multipart/form-data; boundary="' + boundary + '"',
-        dataType: 'json',
-        processData: false,
-        success: function (data, status) {
-            //showAlert('logo-upload-alert', 'logo Changed!', true);
-        },
-        error: function (xhr, status) {
-            //showAlert('logo-upload-alert', 'Cannot upload: ' + JSON.parse(xhr.responseText).error, false);
-        }
-    });
-}
-
-function deleteLogo(orgId) {
-    $.ajax({
-        method: 'DELETE',
-        url: getUrl('/api/logo/' + orgId),
-        success: function (data, status) {
-            //showAlert('logo-delete-alert', 'logo Deleted!', true);
-        },
-        error: function (xhr, status) {
-            //showAlert('logo-delete-alert', 'Cannot delete: ' + JSON.parse(xhr.responseText).error, false);
         }
     });
 }

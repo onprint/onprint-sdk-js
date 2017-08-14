@@ -1,13 +1,13 @@
 describe('Onprint Sdk Tests', function () {
     describe('Login to Onprint', function () {
         it('should login Robert Tester', function (done) {
-            login("[[[TESTER LOGIN]]]", "[[[TESTER PASSWORD]]]", function (data, status) {
+            login(testconfig.testerlogin, testconfig.testerpassword, testconfig.apikey, function (data, status) {
                 if (status == "success") {
                     $.data(window, "orgid", data.organizationId);
                     done();
                 }
                 else {
-                    done(data);
+                    done(status);
                 }
             });
         });
@@ -20,13 +20,15 @@ describe('Onprint Sdk Tests', function () {
                 ApplicationInstanceId: '123',
                 ApplicationName: 'Mocha Sdk Test',
                 ApplicationVersion: '1.0.0',
-                ApiKey: apiKey,
+                ApiKey: testconfig.apikey,
                 DeviceName: 'PC',
                 DeviceSystemVersion: '10.0.0',
                 DeviceSystemVersionName: 'Windows 10',
                 SdkName: 'Onprint JS Sdk',
                 SdkVersion: '1.0.0',
-                Language: 'fr-FR'
+                Language: 'fr-FR',
+                Longitude: '68',
+                Latitude: '47'
             };
 
             $.ajax({
@@ -57,26 +59,27 @@ describe('Onprint Sdk Tests', function () {
                 ApplicationInstanceId: '123',
                 ApplicationName: 'Mocha Sdk Test',
                 ApplicationVersion: '1.0.0',
-                ApiKey: apiKey,
+                ApiKey: testconfig.apikey,
                 DeviceName: 'PC',
                 DeviceSystemVersion: '10.0.0',
                 DeviceSystemVersionName: 'Windows 10',
                 SdkName: 'Onprint JS Sdk',
                 SdkVersion: '1.0.0',
-                SessionId: $.data(window, 'sessionid')
+                SessionId: $.data(window, 'sessionid'),
+                Longitude: 'toto'
             };
             clickAction($.data(window, 'firstactjocid'), headers, function (data, status, xhr) {
                 if (xhr.status == 204) {
                     done();
                 }
                 else {
-                    done(xhr);
+                    done(xhr.status);
                 }
             });
         });
     });
 
-    describe.skip('Enrich an image', function () {
+    describe('Enrich an image', function () {
         it('should find who are my children nodes', function (done) {
             getChildrenNodes($.data(window, "orgid"), function (data, status, xhr) {
                 if (status == "success") {
@@ -200,24 +203,71 @@ describe('Onprint Sdk Tests', function () {
                 }
             });
         });
-        it('should now find the rabbit image and return actions', function (done) {
+    });
+
+    describe('Add a zone and actions to the activated image', function() {
+        it('should add a zone to the image', function(done) {
+            var zone = {
+                ImageId: $.data(window, 'firstpageid'),
+                PositionX: 20,
+                PositionY:20,
+                Width:40,
+                Height:60
+            };
+            postZone(zone, function(data, status, xhr) {
+                if(status == 'success') {
+                    $.data(window, 'zoneid', data.Id);
+                    done();
+                }
+                else {
+                    done(status);
+                }
+            });
+        });
+
+        it('should create a new action on the zone', function (done) {
+            var action = {
+                NodeId: $.data(window, 'zoneid'),
+                Name: 'Une zone pleine de lapins',
+                LanguageCode: 'fr-FR',
+                Type: 'URL',
+                Content: JSON.stringify({
+                    Url: 'https://wamiz.com/rongeurs/lapin-3/guide',
+                    ContentType: 'text/html'
+                })
+            };
+            postAction(action, function (data, status, xhr) {
+                if (status == 'success') {
+                    done();
+                }
+                else {
+                    done(status);
+                }
+            });
+        });
+    });
+
+    describe('Search the created image', function () {
+        it('should now find the rabbit image and return 2 actions', function (done) {
             this.timeout(5000);
             var searchQuery = {
                 ApplicationInstanceId: '123',
                 ApplicationName: 'Mocha Sdk Test',
                 ApplicationVersion: '1.0.0',
-                ApiKey: apiKey,
+                ApiKey: testconfig.apikey,
                 DeviceName: 'PC',
                 DeviceSystemVersion: '10.0.0',
                 DeviceSystemVersionName: 'Windows 10',
                 SdkName: 'Onprint JS Sdk',
                 SdkVersion: '1.0.0',
-                Language: 'fr-FR'
+                Language: 'fr-FR',
+                Longitude:'129.570001',
+                Latitude:'-27.164763'
             };
 
             $.ajax({
                 method: 'GET',
-                url: 'rabbits.jpg',
+                url: 'rabbitszone.jpg',
                 dataType: 'binary',
                 success: function (data) {
 
@@ -226,15 +276,23 @@ describe('Onprint Sdk Tests', function () {
                     });
                     searchImage(file, searchQuery, function (data, status, xhr) {
                         if (xhr.status == 200) {
-                            done();
+                            if(data.Actions.length > 2) {
+                                done('Actions count = ' + data.Actions.length);
+                            }
+                            else {
+                                done();
+                            }
                         }
                         else {
-                            done(xhr);
+                            done(status);
                         }
                     });
                 }
             });
         });
+    });
+    
+    describe('Cleanup', function () {
         it('should delete the test folder and what was inside', function (done) {
             deleteFolder($.data(window, 'folderid'), true, function (data, status, xhr) {
                 if (status == 'nocontent') {
@@ -246,6 +304,4 @@ describe('Onprint Sdk Tests', function () {
             });
         });
     });
-
-
 });
