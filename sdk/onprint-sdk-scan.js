@@ -42,6 +42,48 @@ function searchImage(file, searchQuery, callback) {
     });
 }
 
+function searchPicture(file, searchQuery, callback) {
+    var query = {
+        Keywords : searchQuery.Keywords
+    };
+    var boundary = getBoundary();
+
+    var contentForm = createFormContent(query, "query", boundary);
+    var contentFile = createFileContent(file.name, "file", file.type, boundary);
+    
+    
+    var blob = new Blob([contentForm, contentFile, file, createEndContent(boundary)]);
+    $.ajax({
+        method: 'POST',
+        url: getUrl('/api/Pictures/Search', true),
+        data: blob,
+        contentType: 'multipart/form-data; boundary="' + boundary + '"',
+        dataType: 'json',
+        processData: false,
+        headers: {
+            'ApplicationInstanceId': searchQuery.ApplicationInstanceId,
+            'ApplicationName': searchQuery.ApplicationName,
+            'ApplicationVersion': searchQuery.ApplicationVersion,
+            'ApiKey': searchQuery.ApiKey,
+            'DeviceName': searchQuery.DeviceName,
+            'DeviceSystemVersion': searchQuery.DeviceSystemVersion,
+            'DeviceSystemVersionName': searchQuery.DeviceSystemVersionName,
+            'SdkName': searchQuery.SdkName,
+            'SdkVersion': searchQuery.SdkVersion
+        },
+        success: function (data, status, xhr) {
+            if (xhr.status == 200) {
+            }
+            if (xhr.status == 204) {
+            }
+            callback(data, status, xhr);
+        },
+        error: function (xhr, status, xhr2) {
+            callback(null, status, xhr);
+        }
+    });
+}
+
 function searchImageId(imageId, searchQuery, callback) {
     var language = searchQuery.Language;
 

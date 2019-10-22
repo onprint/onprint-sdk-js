@@ -13,9 +13,9 @@ describe('Onprint Sdk Tests', function () {
         });
     });
 
-    describe('Search for an image', function () {
+    describe('Search for an enriched image', function () {
         it('should return actions', function (done) {
-            this.timeout(5000);
+            this.timeout(50000);
             var searchQuery = {
                 ApplicationInstanceId: '123',
                 ApplicationName: 'Mocha Sdk Test',
@@ -79,30 +79,46 @@ describe('Onprint Sdk Tests', function () {
         });
     });
 
-    describe('Enrich an image', function () {
-        it('should find who are my children nodes', function (done) {
-            getChildrenNodes($.data(window, "orgid"), function (data, status, xhr) {
-                if (status == "success") {
-                    if (data[0].Name == 'TouCho') {
-                        done();
-                    }
-                    done(data[0].Name);
-                }
-                else {
-                    done(status);
-                }
-            })
-        });
-        it('should get children documents', function (done) {
-            getChildrenDocuments($.data(window, "orgid"), function (docs, statusd, xhr) {
-                if (statusd == 'success' && docs.length > 2) {
-                    done();
-                }
-                else {
-                    done('docs length: ' + docs.length);
+    describe('Search for a Picture', function() {
+        it('should return Picture', function (done) {
+            this.timeout(50000);
+            var searchQuery = {
+                ApplicationInstanceId: '123',
+                ApplicationName: 'Mocha Sdk Test',
+                ApplicationVersion: '1.0.0',
+                ApiKey: testconfig.apikey,
+                DeviceName: 'PC',
+                DeviceSystemVersion: '10.0.0',
+                DeviceSystemVersionName: 'Windows 10',
+                SdkName: 'Onprint JS Sdk',
+                SdkVersion: '1.0.0',
+                Language: 'fr-FR'
+            };
+
+            $.ajax({
+                method: 'GET',
+                url: 'cake.jpg',
+                dataType: 'binary',
+                success: function (data) {
+                    var file = new File([data], 'cake.jpg', {
+                        type: 'image/jpeg'
+                    });
+                    searchPicture(file, searchQuery, function (data, status, xhr) {
+                        if (xhr.status == 200) {
+                            $.data(window, 'content', data);
+                            done();
+                        }
+                        else {
+                            done(xhr);
+                        }
+                    });
                 }
             });
         });
+    });
+
+
+    describe('Enrich an image', function () {
         it('should create a new Folder', function (done) {
             var folder = {
                 ParentId: $.data(window, 'orgid'),
@@ -249,7 +265,7 @@ describe('Onprint Sdk Tests', function () {
 
     describe('Search the created image', function () {
         it('should now find the rabbit image and return 2 actions', function (done) {
-            this.timeout(5000);
+            this.timeout(20000);
             var searchQuery = {
                 ApplicationInstanceId: '123',
                 ApplicationName: 'Mocha Sdk Test',
